@@ -1,0 +1,28 @@
+Since you removed the Orders service from the monolith, you will have to modify the monolith to point to the new external Orders microservice.
+
+When breaking down a monolith, you are removing pieces of code from a single codebase to multiple microservices and deploying them separately. Since the microservices are running on a different server, you can no longer reference your service URLs as absolute paths - you need route to the Order microservice server address. This will require some downtime to the monolith service to update the URL for each service that has been broken out. This should be accounted for when planning on moving your microservices and monolith to production during the microservices migration process.
+
+You need to update your config file in the monolith to point to the new Orders microservices IP address. Use the nano editor to replace the local URL with the IP address of the Orders microservice:
+
+cd ~/monolith-to-microservices/react-app
+nano .env.monolith
+
+REACT_APP_ORDERS_URL=http://<ORDERS_IP_ADDRESS>/api/orders
+REACT_APP_PRODUCTS_URL=/service/products
+
+Test the new microservice by navigating the URL you just set in the file. The webpage should return a JSON response from your Orders microservice.
+
+Next, rebuild the monolith frontend and repeat the build process to build the container for the monolith and redeploy to the GKE cluster.
+
+Rebuild Monolith Config Files
+
+npm run build:monolith
+content_copy
+Create Docker Container with Cloud Build:
+
+cd ~/monolith-to-microservices/monolith
+gcloud builds submit --tag gcr.io/${GOOGLE_CLOUD_PROJECT}/monolith:2.0.0 .
+content_copy
+Deploy Container to GKE:
+
+kubectl set image deployment/monolith monolith=gcr.io/${GOOGLE_CLOUD_PROJECT}/monolith:2.0.0

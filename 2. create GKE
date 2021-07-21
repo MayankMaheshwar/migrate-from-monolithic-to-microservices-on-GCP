@@ -1,0 +1,9 @@
+Run the following command to enable the Containers API so you can use Google Kubernetes Engine:
+
+gcloud services enable container.googleapis.com
+
+Run the command below to create a GKE cluster named fancy-cluster with 3 nodes:
+
+gcloud container clusters create fancy-cluster --num-nodes 3
+
+
